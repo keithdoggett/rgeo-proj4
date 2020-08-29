@@ -15,3 +15,5 @@ matrix:
   include:
     - dist: focal
       rvm: 2.7
+    allow_failures:
+      - dist: focal
