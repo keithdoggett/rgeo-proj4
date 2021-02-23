@@ -6,3 +6,5 @@ require "common/factory_tests"
 require "psych"
 
 require "pry-byebug" unless ENV["CI"]
+
+p "GEOS SUPPORTED: #{RGeo::Geos.supported?}"
