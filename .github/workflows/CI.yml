@@ -29,6 +29,11 @@ jobs:
       - name: Install Packages (Mac)
         if: matrix.os == 'macos'
         run: brew install geos proj
+      - name: GEOS info
+        run: |
+          which geos-config
+          geos-config --prefix
+          geos-config --libs
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
