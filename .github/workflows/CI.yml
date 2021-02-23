@@ -15,7 +15,6 @@ jobs:
           - "2.7"
           - "2.6"
           - "2.5"
-          - jruby
         os:
           - ubuntu
           - macos
@@ -34,6 +33,8 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
+      - name: Bundle Install
+        run: bundle install
       - name: Test
         run: CI=1 bundle exec rake
   RuboCop:
