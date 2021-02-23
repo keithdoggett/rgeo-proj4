@@ -34,7 +34,9 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
       - name: Bundle Install
-        run: bundle install
+        run: |
+          gem uninstall rgeo
+          bundle install
       - name: Test
         run: CI=1 bundle exec rake
   RuboCop:
