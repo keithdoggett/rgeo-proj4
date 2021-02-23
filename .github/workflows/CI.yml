@@ -35,7 +35,7 @@ jobs:
           bundler-cache: true
       - name: Bundle Install
         run: |
-          gem uninstall rgeo
+          gem install rgeo
           bundle install
       - name: Test
         run: CI=1 bundle exec rake
