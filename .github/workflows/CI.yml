@@ -26,7 +26,7 @@ jobs:
       - name: Install Packages (Linux)
         if: matrix.os == 'ubuntu'
         run: |
-          sudo add-apt-repository ppa:ubuntugis/ubuntugis
+          sudo add-apt-repository ppa:ubuntugis/ubuntugis-stable
           sudo apt-get install libgeos-dev libproj-dev proj-bin -y
       - name: Install Packages (Mac)
         if: matrix.os == 'macos'
