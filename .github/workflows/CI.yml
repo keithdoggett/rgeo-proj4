@@ -71,8 +71,8 @@ jobs:
         run: |
           cd ${{ matrix.proj }}
           ./configure
-          su -c "make && make install -j 8"
-          su -c "projsync --system-directory"
+          sudo su -c "make && make install -j 8"
+          sudo su -c "projsync --system-directory"
           cd ../
       - uses: ruby/setup-ruby@v1
         with:
