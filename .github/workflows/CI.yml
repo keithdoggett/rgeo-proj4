@@ -48,7 +48,6 @@ jobs:
       matrix:
         ruby:
           - "3.0"
-          - "2.7"
         os:
           - ubuntu
         proj:
@@ -72,7 +71,6 @@ jobs:
           cd ${{ matrix.proj }}
           ./configure --enable-shared --enable-fast-install
           sudo su -c "make && make install -j 8"
-          sudo su -c "projsync --system-directory"
           cd ../
       - uses: ruby/setup-ruby@v1
         with:
