@@ -29,7 +29,7 @@ jobs:
         if: matrix.os == 'ubuntu'
         run: |
           sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
-          sudo apt-get install libgeos-dev libproj-dev=7.2.1-1~focal0 proj-bin -y
+          sudo apt-get install libgeos-dev libproj-dev proj-bin -y
       - name: Install Packages (Mac)
         if: matrix.os == 'macos'
         run: brew install geos proj
@@ -42,47 +42,47 @@ jobs:
           bundle install
       - name: Test
         run: bundle exec rake
-  # BuildOnVersions:
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       ruby:
-  #         - "3.0"
-  #         - "2.7"
-  #       os:
-  #         - ubuntu
-  #       proj:
-  #         - "proj-8.0.0"
-  #         - "proj-7.2.1"
-  #         - "proj-7.1.1"
-  #         - "proj-7.0.1"
-  #         - "proj-6.3.1"
-  #         - "proj-6.2.1"
-  #   runs-on: ${{ matrix.os }}-latest
-  #   continue-on-error: ${{ matrix.ruby == 'head' }}
-  #   name: Ruby ${{ matrix.ruby }} (${{ matrix.proj }})
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Download Package
-  #       run: |
-  #         sudo apt-get install curl libcurl4-openssl-dev libssl-dev
-  #         wget -c https://download.osgeo.org/proj/${{ matrix.proj }}.tar.gz -O - | tar -xz
-  #     - name: Install Packages
-  #       run: |
-  #         cd ${{ matrix.proj }}
-  #         ./configure
-  #         sudo su -c "make && make install -j 8"
-  #         sudo su -c "projsync --system-directory"
-  #         cd ../
-  #     - uses: ruby/setup-ruby@v1
-  #       with:
-  #         ruby-version: ${{ matrix.ruby }}
-  #         bundler-cache: false
-  #     - name: Bundle Install
-  #       run: |
-  #         bundle install
-  #     - name: Test
-  #       run: bundle exec rake
+  BuildOnVersions:
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby:
+          - "3.0"
+          - "2.7"
+        os:
+          - ubuntu
+        proj:
+          - "proj-8.0.0"
+          - "proj-7.2.1"
+          - "proj-7.1.1"
+          - "proj-7.0.1"
+          - "proj-6.3.1"
+          - "proj-6.2.1"
+    runs-on: ${{ matrix.os }}-latest
+    continue-on-error: ${{ matrix.ruby == 'head' }}
+    name: Ruby ${{ matrix.ruby }} (${{ matrix.proj }})
+    steps:
+      - uses: actions/checkout@v2
+      - name: Download Package
+        run: |
+          sudo apt-get install curl libcurl4-openssl-dev libssl-dev
+          wget -c https://download.osgeo.org/proj/${{ matrix.proj }}.tar.gz -O - | tar -xz
+      - name: Install Packages
+        run: |
+          cd ${{ matrix.proj }}
+          ./configure --enable-shared --enable-fast-install
+          sudo su -c "make && make install -j 8"
+          sudo su -c "projsync --system-directory"
+          cd ../
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: false
+      - name: Bundle Install
+        run: |
+          bundle install
+      - name: Test
+        run: bundle exec rake
   RuboCop:
     runs-on: ubuntu-latest
     steps:
