@@ -63,11 +63,12 @@ jobs:
           - "proj-6.2.1"
     runs-on: ${{ matrix.os }}-latest
     continue-on-error: ${{ matrix.ruby == 'head' }}
-    name: Ruby ${{ matrix.ruby }} (${{ matrix.os }})
+    name: Ruby ${{ matrix.ruby }} (${{ matrix.proj }})
     steps:
       - uses: actions/checkout@v2
       - name: Download Package
         run: |
+          sudo apt-get install curl
           wget -c https://download.osgeo.org/proj/${{ matrix.proj }}.tar.gz -O - | tar -xz
       - name: Install Packages
         run: |
