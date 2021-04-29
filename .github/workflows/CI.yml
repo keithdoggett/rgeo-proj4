@@ -42,6 +42,49 @@ jobs:
           bundle install
       - name: Test
         run: bundle exec rake
+  BuildOnVersions:
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby:
+          - head
+          - "3.0"
+          - "2.7"
+          - "2.6"
+          - "2.5"
+        os:
+          - ubuntu
+        proj:
+          - "proj-8.0.0"
+          - "proj-7.2.1"
+          - "proj-7.1.1"
+          - "proj-7.0.1"
+          - "proj-6.3.1"
+          - "proj-6.2.1"
+    runs-on: ${{ matrix.os }}-latest
+    continue-on-error: ${{ matrix.ruby == 'head' }}
+    name: Ruby ${{ matrix.ruby }} (${{ matrix.os }})
+    steps:
+      - uses: actions/checkout@v2
+      - name: Download Package
+        run: |
+          wget -c https://download.osgeo.org/proj/${{proj}}.tar.gz -O - | tar -xz
+      - name: Install Packages
+        run: |
+          cd ${{proj}}
+          ./configure
+          make && make install
+          projsync --system-directory
+          cd ../
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: false
+      - name: Bundle Install
+        run: |
+          bundle install
+      - name: Test
+        run: bundle exec rake
   RuboCop:
     runs-on: ubuntu-latest
     steps:
