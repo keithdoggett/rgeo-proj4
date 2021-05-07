@@ -44,14 +44,14 @@ jobs:
         id: proj-cache
         with:
           path: ./proj-${{ matrix.proj }}
-          key: proj-${{ matrix.proj }}-os-${{ matrix.os }}
+          key: proj-${{ matrix.proj }}-os-${{ matrix.os }}-1
       - name: Download and Compile Proj
         if: steps.proj-cache.outputs.cache-hit != 'true'
         run: |
           wget -c https://download.osgeo.org/proj/proj-${{ matrix.proj }}.tar.gz -O - | tar -xz
           cd proj-${{ matrix.proj }}
           ./configure --enable-shared --enable-fast-install
-          sudo make -j 8
+          make -j 8
           cd ../
       - name: Install Proj
         run: |
