@@ -20,6 +20,13 @@ jobs:
         os:
           - ubuntu
           - macos
+        proj:
+          - "8.0.0"
+          - "7.2.1"
+          - "7.1.1"
+          - "7.0.1"
+          - "6.3.1"
+          - "6.2.1"
     runs-on: ${{ matrix.os }}-latest
     continue-on-error: ${{ matrix.ruby == 'head' || matrix.os == 'macos' }}
     name: Ruby ${{ matrix.ruby }} (${{ matrix.os }})
@@ -29,10 +36,28 @@ jobs:
         if: matrix.os == 'ubuntu'
         run: |
           sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
-          sudo apt-get install libgeos-dev libproj-dev proj-bin -y
+          sudo apt-get install curl libcurl4-openssl-dev libssl-dev libgeos-dev
       - name: Install Packages (Mac)
         if: matrix.os == 'macos'
-        run: brew install geos proj
+        run: brew install geos make
+      - uses: actions/cache@v2
+        id: proj-cache
+        with:
+          path: ./proj-${{ matrix.proj }}
+          key: proj-${{ matrix.proj }}-os-${{ matrix.os }}
+      - name: Download and Compile Proj
+        if: steps.proj-cache.outputs.cache-hit != 'true'
+        run: |
+          wget -c https://download.osgeo.org/proj/proj-${{ matrix.proj }}.tar.gz -O - | tar -xz
+          cd proj-${{ matrix.proj }}
+          ./configure --enable-shared --enable-fast-install
+          sudo su -c "make -j 8"
+          cd ../
+      - name: Install Proj
+        run: |
+          cd proj-${{ matrix.proj }}
+          sudo su -c "make install"
+          cd ../
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
@@ -42,7 +67,7 @@ jobs:
           bundle install
       - name: Test
         run: bundle exec rake
-  BuildOnVersions:
+  BuildProj:
     strategy:
       fail-fast: false
       matrix:
